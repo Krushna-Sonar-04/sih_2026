@@ -14,6 +14,37 @@ hosted URL is required to run it locally.**
 
 ---
 
+## 🚀 Quick Start (Demo Mode)
+
+Run these commands in two separate terminal windows:
+
+**Terminal 1: Database & Backend**
+```powershell
+# Start the database
+docker compose up -d db
+
+# Setup and run backend
+cd backend
+python -m venv .venv
+.\.venv\Scripts\activate   # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+copy .env.example .env     # (Windows) cp .env.example .env on macOS/Linux
+alembic upgrade head
+uvicorn app.main:app --reload --port 8000
+```
+
+**Terminal 2: Frontend**
+```powershell
+# Setup and run frontend
+npm install
+copy .env.example .env.local  # (Windows) cp .env.example .env.local on macOS/Linux
+npm run dev
+```
+
+Open **http://localhost:8080** in your browser. For detailed instructions and live data setup, see the **Local Development** section below.
+
+---
+
 ## Project structure
 
 ```
