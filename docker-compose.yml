@@ -1,0 +1,42 @@
+# Local stack for DRISHTI: PostgreSQL (primary database) + FastAPI backend.
+# The frontend runs on the host with `npm run dev` (see README).
+#
+#   docker compose up -d db          # database only (recommended on Windows)
+#   docker compose up --build        # database + backend API
+#
+# Credentials come from the shell or a root .env file (see .env.example);
+# no production password is hard-coded here.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: drishti-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-drishti}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-drishti_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-drishti}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - drishti_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-drishti}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    container_name: drishti-api
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-drishti}:${POSTGRES_PASSWORD:-drishti_local_dev}@db:5432/${POSTGRES_DB:-drishti}
+      CORS_ORIGINS: http://localhost:8080,http://localhost:5173
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  drishti_pgdata:

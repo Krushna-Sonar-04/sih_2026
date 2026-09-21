@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export function PageHeading({title,description,actions}:{title:string;description:string;actions?:ReactNode}) { return <div className="mb-9 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-6"><div className="min-w-0"><h1 className="text-3xl font-bold text-foreground lg:text-4xl">{title}</h1><p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">{description}</p></div>{actions}</div> }
